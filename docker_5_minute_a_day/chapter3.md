@@ -198,3 +198,41 @@ docker run -it [image] / docker run -it [image] everybody
 ### 3.3.5
 
 优先使用exec格式ENTRYPOINT,CMD提供默认参数,docker run可替换默认参数
+
+## 3.4 分发镜像
+
+### 3.4.1 镜像命名
+
+```
+[image name] = [repository]:[tag]
+
+使用镜像时最好避免使用latest,使用指定tag
+
+$ docker tag ubuntu [repository]:[tag]
+
+默认规定:
+image:1 分支1中最新
+iamge:1.7 1.7.x最新
+```
+
+### 3.4.2 docker hub
+
+```
+$ docker login -u username
+
+# 若username和登陆用户不同无法上传
+$ docker tag ubuntu username/ubuntu:v1
+$ docker push username/ubuntu:v1
+```
+
+### 3.4.3 本地registry
+
+```
+$ docker run -d -p 5000:5000 /myregistry:/var/lib/registry registry:2
+
+$ docker tag username/ubuntu:v1 registry_host:port/username/ubuntu:v1
+# registry_host:port 运行了registry的主机及端口
+$ docker push registry_host:port/username/ubuntu:v1
+
+$ docker pull registry_host:port/username/ubuntu:v1
+```
