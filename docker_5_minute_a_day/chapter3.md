@@ -187,7 +187,7 @@ ENTRYPOINT: 容器以应用或者服务形式运行,不会被忽略一定会被�
 1. ENTRYPOINT ["executable", "param1", "param2"]
 2. ENTRYPOINT param1 param2  # 忽略任何CMD或者docker run提供的参数
 
-ENTRYPOINT的exec可以用CMD提供默认参数,ENTRYPOINT中的参数始终会被使用,CMD提供的默认参数可以在启动时替换
+ENTRYPOINT的exec可以用CMD提供*额外*默认参数,ENTRYPOINT中的参数始终会被使用,CMD提供的默认参数可以在启动时替换
 
 栗子: ENTRYPOINT ["/bin/echo", "hello"] CMD ["world"]
 
