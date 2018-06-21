@@ -15,6 +15,9 @@ __all__ = [...]: import ×时会引入的变量,即使是__开头也会导入
 
 __file__: module的绝对路径
 
+__path__:  any module that contains a __path__ attribute is considered a package, [packages](https://docs.python.org/3/reference/import.html)
+
 __package__: 'package', module以python -m package.module才有这个变量
 
 __name__: 'package.module'
+
