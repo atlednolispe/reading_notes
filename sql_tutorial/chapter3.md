@@ -53,7 +53,7 @@ FROM Product
 GROUP BY purchase_price;
 
 -- GROUP BY常见问题
--- 聚合函数SELECT只能包含常数、聚合函数、聚合键
+-- * 聚合函数SELECT只能包含常数、聚合函数、聚合键，有聚合函数出现在SELECT中,则此SELECT中就只能出现聚合键其他键都不行
 -- 因为SQL在DBMS内部的执行顺序,GROUP BY子句中不能使用SELECT子句中定义的别名
 -- GROUP BY子句的结果顺序随机
 -- 只有SELECT子句和HAVING子句以及ORDER BY子句中能够使用聚合函数,WHERE中不能使用
