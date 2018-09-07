@@ -76,4 +76,11 @@ $ docker run -it --network=container:[container_id] httpd
 # 2. 外部访问container
 # 通过端口映射,每个映射端口都会启动一个docker-proxy
 $ docker run -d -p [host port]:[container port] httpd
+
+# 3. docker访问host端口
+# docker内部通过172.17.0.1访问host,host的端口需要以0.0.0.0:port的方式绑定
+# 可能还需要为docker0开放防火墙
+# iptables -A INPUT -i docker0 -j ACCEPT
 ```
+
+[how-to-access-host-port-from-docker-container](https://stackoverflow.com/questions/31324981/how-to-access-host-port-from-docker-container)
