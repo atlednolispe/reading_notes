@@ -51,6 +51,8 @@ rm -rf .gradle/caches
 
 sync gradle
 
+Mac如果遇到无法正确import一些包,尝试File - Invalidate Caches
+
 ### 1.3.4 分析第一个Android程序
 
 1. .gradle, .idea

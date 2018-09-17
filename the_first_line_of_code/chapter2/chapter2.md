@@ -15,7 +15,7 @@ Android: 逻辑与视图分离,最好每个活动对应一个布局(用于显示
 
 ### 2.2.2 创建布局
 
-```android
+```xml
 // 布局
 // res/layout/first_layout.xml
 XML引用: @id/id_name
@@ -66,7 +66,7 @@ XML定义: @+id/id_name
 
 ### 2.2.4 Toast
 
-```android
+```java
 // new View.OnClickListener() 实例
         Button button1 = (Button) findViewById(R.id.button_1);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +88,7 @@ XML定义: @+id/id_name
 
 Intent是Android各组件交互的方式,可以指明当前组件想执行的动作,组件间传递数据,启动活动服务以及广播
 
-```android
+```java
 // 显示intent
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +165,7 @@ Intent只能指定一个action,但可以指定多个category
 
 ### 2.3.4 INTENT在活动间传递数据
 
-```android
+```java
 // 给下一个活动传递数据
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,4 +258,120 @@ Intent只能指定一个action,但可以指定多个category
         setResult(RESULT_OK, intent);
         finish();
     }
+```
+
+## 2.4 活动的生命周期
+
+### 2.4.1 返回栈
+
+Task = 一组在back stack中的acitvities,系统总是显示栈顶的活动给用户
+
+### 2.4.2 活动状态
+
+1. 运行状态: 栈顶的活动处于运行状态,最不愿意回收
+2. 暂停状态: 活动不再处于栈顶但仍然可见(不是所有活动都会占满整个屏幕),仍完全存活,内存极低时才回收
+3. 停止状态: 不再栈顶且完全不可见,系统会保持相应状态和成员变量,但可能会被系统回收
+4. 销毁状态: 从返回栈移除后就成为销毁状态
+
+### 2.4.3 活动的生存期
+
+Activity的7个回调方法: 除onStart,两两相对
+1. onCreate(): 活动第一次创建时调用,完成活动初始化操作(加载布局,绑定事件)
+2. onStart(): 不可见变可见时调用
+3. onResume(): 准备好和用户交互时调用,活动必定处于栈顶且运行状态
+4. onPause(): 准备启动或者恢复另一个活动时调用,通常用于释放消耗CPU的资源,保持一些关键数据,这个方法执行速度要快,不然影响新的栈顶活动的使用
+5. onStop(): 活动完全不可见时调用.和onPause区别: 启动新活动是对话框,则onPause会执行,onStop不执行
+6. onDestroy(): 活动销毁前调用,调用后处于销毁状态
+7. onRestart(): 活动由停止状态变为运行状态前调用
+
+1. 完整生存期: onCreate -> onDestroy,onCreate完成初始化,onDestroy释放内存
+2. 可见生存期: onStart -> onStop,此期间活动对用户总是可见,即使不能交互
+3. 前台生存期: onResume -> onPause,活动处于运行且可与用户交互,看到最多是这个状态的活动
+
+ActivityLifeCycleTest了解整个周期
+
+### 2.4.5 活动被回收
+
+停止状态的活动被回收后back不是调用onRestart,而是使用onCreate
+
+通过onSaveInstanceState回调,在活动回收前必定被调用,解决数据保存问题
+
+```java
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String tempData = "Something you just typed";
+        outState.putString("data_key", tempData);
+        Log.d(TAG, "onSaveInstanceState");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+        setContentView(R.layout.main_layout);
+        // 如果被手动关闭应用是不会有保存状态的
+        if (savedInstanceState != null) {
+            String tempData = savedInstanceState.getString("data_key");
+            Log.d(TAG, tempData);
+        }
+
+        Button startNormalActivity = (Button) findViewById(R.id.start_normal_activity);
+        Button startDialogActivity = (Button) findViewById(R.id.start_dialog_activity);
+
+        startNormalActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NormalActivity.class);
+                startActivity(intent);
+            }
+        });
+        startDialogActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DialogActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart");
+    }
+}
 ```
