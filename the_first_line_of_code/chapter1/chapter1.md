@@ -34,14 +34,22 @@ Package name: Android根据包名区分不同应用程序,包名需要唯一
 配置Mac Android Studio 3.1.4:
 
 1.
+
 settings-build-gradle studio
 check + enable embedded Maven repository
 
 2.
+
 #gradle-wrapper.properties
 distributionUrl=https\://services.gradle.org/distributions/gradle-4.5-all.zip
 
 之后build-clean project
+
+rm -rf .gradle/caches
+
+3.
+
+sync gradle
 
 ### 1.3.4 分析第一个Android程序
 
