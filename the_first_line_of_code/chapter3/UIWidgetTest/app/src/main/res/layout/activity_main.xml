@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--match_parent: 和父布局一样-->
+    <!--wrap_content: 包含内容一样大小-->
+    <!--gravity: 文字对齐方式, center = center_vertical|center_horizontal-->
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="#00ff00"
+        android:text="This is TextView" />
+
+    <!--默认对Button中英文大写-->
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:textAllCaps="false" />
+
+    <!--maxLines指定最大行数,不会继续拉伸,文本可以滚动-->
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Type something here"
+        android:maxLines="2" />
+
+    <!--drawable-xhdpi来指定分辨率放置图片,drawable下不放置图片-->
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_1"/>
+
+    <!--android:visibility-->
+    <!--visible: 默认可见-->
+    <!--invisible: 仍占据原来位置,可理解为透明-->
+    <!--gone: 不可见且不占据空间-->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100" />
+
+    <!--置顶于所有界面元素之上,屏蔽其他控件交互能力-->
+    <!--dialog-->
+
+</LinearLayout>
