@@ -2,6 +2,7 @@ package com.example.atlednolispe.activitytest;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,11 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class FirstActivity extends AppCompatActivity {
+public class FirstActivity extends BaseActivity {
+    private static final String TAG = "FirstActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            String tempData = savedInstanceState.getString("data_key");
+            Log.d(TAG, tempData);
+        }
+        Log.d(TAG, "Task id is " + getTaskId());
         setContentView(R.layout.first_layout);
 
         Button button1 = (Button) findViewById(R.id.button_1);
@@ -24,9 +31,7 @@ public class FirstActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-                // 第二个请求码参数只要唯一就可以
-                // 新启动的activity被销毁后回调FirstActivity的onActivityResult,回到FirstActivity
-                startActivityForResult(intent, 1);
+                startActivity(intent);
             }
         });
     }
@@ -44,7 +49,7 @@ public class FirstActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == RESULT_OK) {
                     String returnedData = data.getStringExtra("data_return");
-                    Log.d("FirstActivity", "onActivityResult " + returnedData);
+                    Log.d(TAG, "onActivityResult " + returnedData);
                 }
                 break;
             default:
@@ -69,5 +74,12 @@ public class FirstActivity extends AppCompatActivity {
             default:
         }
         return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String tempData = "saved data";
+        outState.putString("data_key", tempData);
     }
 }

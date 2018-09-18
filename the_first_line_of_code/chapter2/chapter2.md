@@ -294,7 +294,7 @@ ActivityLifeCycleTest了解整个周期
 
 停止状态的活动被回收后back不是调用onRestart,而是使用onCreate
 
-通过onSaveInstanceState回调,在活动回收前必定被调用,解决数据保存问题
+通过onSaveInstanceState回调,在活动回收前必定被调用,解决数据保存问题,只有app被系统回收才在create中调用bundle
 
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -374,4 +374,125 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onRestart");
     }
 }
+```
+
+## 2.5 活动的启动模式
+
+AndroidManifest: android:launchMode
+
+1. standard
+2. singleTop
+3. singleTask
+4. singleInstance
+
+```java
+// standard
+// 默认启动模式,每次启动会创建活动的一个新实例在back stack中入栈,这个应用的新activity都是默认在同一个默认的back stack
+
+// singleTop
+// 启动活动时若栈顶已经是该活动,则直接使用,不会再创建新实例
+$ adb shell
+$ dumpsys activity  // 查看当前activity的stack信息
+
+启动要用startActivity，若用startActivityForResult由于要回传之前的activity所以仍会新建一个新activity
+
+
+// singleTask
+活动在整个应用上下文只有一个实例,启动活动时先在back stack检查是否存在活动实例,若存在直接使用该实例,并把这个活动上的所有活动全部出栈
+
+// singleInstance
+启动一个新的back stack来管理活动(singleTask指定不同taskAffinity也会启动一个新返回栈),用于解决同一活动在不同返回栈入栈必然新建新实例的问题使得不同应用可以共享一个实例,共用一个返回栈
+
+back键盘会将当前activity所在栈中活动出栈,当前栈为空会显示另一个栈顶的活动
+```
+
+## 2.6 活动的最佳实践
+
+```java
+// 判断当前是哪一个活动
+public class BaseActivity extends AppCompatActivity {
+    private static final String TAG = "BaseActivity";
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, getClass().getSimpleName());
+    }
+}
+
+public class FirstActivity extends BaseActivity
+
+// 随时退出程序
+public class ActivityCollector {
+    public static List<Activity> activities = new ArrayList<>();
+
+    public static void addActivity(Activity activity) {
+        activities.add(activity);
+    }
+
+    public static void removeActivity(Activity activity) {
+        activities.remove(activity);
+    }
+
+    public static void finishAll() {
+        for (Activity activity: activities) {
+            if (!activity.isFinishing()){
+                activity.finish();
+            }
+            activities.clear();
+            // killProcess只能用于杀掉当前程序的进程
+            Log.d("CollectorActivity", Integer.toString(android.os.Process.myPid()));
+            // 将当前应用进程杀掉后再启动也是不会调用savedInstanceState
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+    }
+}
+
+public class ThirdActivity extends BaseActivity {
+    private static final String TAG = "ThirdActivity";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "Task id is " + getTaskId());
+        setContentView(R.layout.third_layout);
+
+        Button button3 = (Button) findViewById(R.id.button_3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityCollector.finishAll();
+            }
+        });
+    }
+}
+
+public class BaseActivity extends AppCompatActivity {
+    private static final String TAG = "BaseActivity";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, getClass().getSimpleName());
+        ActivityCollector.addActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
+    }
+}
+
+// 启动活动最佳写法
+// SecondActivity.java
+    public static void actionStart(Context context, String data1, String data2) {
+        Intent intent = new Intent(context, SecondActivity.class);
+        intent.putExtra("param1", data1);
+        intent.putExtra("param2", data2);
+        context.startActivity(intent);
+    }
+// 启动活动
+// FirstActivity.java
+SecondActivity.actionStart(FirstActivity.this, "data1", "data2");
 ```
