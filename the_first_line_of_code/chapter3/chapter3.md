@@ -230,6 +230,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         android:layout_gravity="top"
         指定对齐方式,orientation水平排列就只能垂直对齐,垂直排列就只能水平对齐
+
+        只有LinearLayout支持使用layout_weight按比例指定控件大小,Relative不支持
     -->
 
     <Button
@@ -316,4 +318,283 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 </RelativeLayout>
 
 <!-- 控件相对控件定位 -->
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Button 3" />
+
+    <!--根据id引用,引用时一定要先定义-->
+    <!--layout_alignRight,两个控件右边缘对齐-->
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button3"
+        android:layout_toLeftOf="@+id/button3"
+        android:text="Button 1" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button3"
+        android:layout_toRightOf="@+id/button3"
+        android:text="Button 2" />
+
+</RelativeLayout>
 ```
+
+### 3.3.3 帧布局
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="This is Textview" />
+
+    <!--谁在后定义谁就在布局上方-->
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher" />
+    
+</RelativeLayout>
+```
+
+### 3.3.4 百分比布局
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    定义命名空间
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    百分比布局已经被弃用
+
+    <Button
+        android:id="@+id/button1"
+        android:text="Button 1"
+        android:layout_gravity="left|top"
+        android:layout_widthPercent="50%"
+        android:layout_heightPercent="50%"/>
+
+    <Button
+        android:id="@+id/button2"
+        android:text="Button 2"
+        android:layout_gravity="right|top"
+        android:layout_widthPercent="50%"
+        android:layout_heightPercent="50%"/>
+
+</android.support.percent.PercentFrameLayout>
+
+// 新百分比布局
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/left_guideline"
+        app:layout_constraintGuide_percent=".15"
+        android:orientation="vertical"/>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/right_guideline"
+        app:layout_constraintGuide_percent=".85"
+        android:orientation="vertical"/>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_guideline"
+        app:layout_constraintGuide_percent=".15"
+        android:orientation="horizontal"/>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottom_guideline"
+        app:layout_constraintGuide_percent=".85"
+        android:orientation="horizontal"/>
+
+    <Button
+        android:text="Button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/button"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toTopOf="@+id/top_guideline"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline" />
+
+</android.support.constraint.ConstraintLayout>
+```
+
+## 3.4 自定义控件
+
+View, ViewGroup
+
+### 3.4.1 引入布局
+
+```xml
+// 自定义布局
+// title.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/title_bg">
+    
+    <Button
+    android:id="@+id/title_back"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="left"
+    android:layout_margin="5dp"
+    android:background="@drawable/back_bg"
+    android:text="Back"
+    android:textColor="#fff"
+    />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:text="Title Text"
+        android:textAlignment="center"
+        android:textSize="30sp"/>
+
+    <Button
+        android:id="@+id/title_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="5dp"
+        android:background="@drawable/edit_bg"
+        android:text="Edit"
+        android:textColor="#fff"
+        />
+
+</LinearLayout>
+
+// 引入自定义布局
+// activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include layout="@layout/title" />
+
+</android.support.constraint.ConstraintLayout>
+```
+
+```java
+// 隐藏标题栏
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+    }
+}
+```
+
+### 3.4.2 创建自定义控件
+
+```java
+/*
+ * 定义控件类,并设置监听
+ */
+package com.example.atlednolispe.uicustomviews;
+
+import android.app.Activity;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.jar.Attributes;
+
+public class TitleLayout extends LinearLayout {
+
+    /*
+    布局中引入TitleLayout会调用2参数的构造函数,
+    inflate动态加载布局文件: id + 给布局添加父布局
+     */
+    public TitleLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        LayoutInflater.from(context).inflate(R.layout.title, this);
+
+        Button titleBack = (Button) findViewById(R.id.title_back);
+        Button titleEdit = (Button) findViewById(R.id.title_edit);
+
+        titleBack.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((Activity) getContext()).finish();
+            }
+        });
+        titleEdit.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "You clicked Edit button", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
+```
+
+```xml
+<!-- 引入自定义布局 -->
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.example.atlednolispe.uicustomviews.TitleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</android.support.constraint.ConstraintLayout>
+```
+
+## 3.5 ListView
